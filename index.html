@@ -1,1 +1,374 @@
-Hello World
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چت‌بات شهریار</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Vazir', sans-serif;
+            background: transparent;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-container {
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #f3f4f6;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            border-radius: 20px 20px 5px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .user-message:hover {
+            transform: translateY(-2px);
+        }
+
+        .bot-message {
+            background: #ffffff;
+            border-radius: 20px 20px 20px 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .bot-message:hover {
+            transform: translateY(-2px);
+        }
+
+        .bot-message p {
+            text-align: justify;
+        }
+
+        .typing-indicator span {
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .send-btn {
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            background: #1e40af;
+        }
+
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(20deg);
+        }
+
+        .icon-spacing {
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .dark body {
+            background: transparent;
+        }
+
+        .dark .chat-container::-webkit-scrollbar-track {
+            background: #374151;
+        }
+
+        .dark .chat-container::-webkit-scrollbar-thumb {
+            background: #60a5fa;
+        }
+
+        .dark .bot-message {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        .dark .user-message {
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+        }
+
+        .dark .input-container {
+            background: #1f2937;
+            border-top: 1px solid #374151;
+        }
+
+        .dark .input-container input {
+            background: #374151;
+            color: #e5e7eb;
+            border-color: #4b5563;
+        }
+
+        .dark .input-container input::placeholder {
+            color: #9ca3af;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                background: transparent;
+            }
+
+            .chat-container {
+                padding: 1rem;
+            }
+
+            .user-message,
+            .bot-message {
+                max-width: 90%;
+            }
+
+            .header-title {
+                font-size: 1rem;
+            }
+
+            .header-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .input-container {
+                padding: 0.5rem;
+            }
+
+            .input-container input {
+                padding: 0.75rem;
+            }
+
+            .main-container {
+                border-radius: 0;
+                height: 100vh;
+                width: 100vw;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4">
+    <div
+        class="main-container flex flex-col h-[95vh] sm:h-[90vh] w-full max-w-3xl bg-white dark:bg-gray-800 rounded-2xl sm:rounded-2xl shadow-2xl sm:shadow-2xl overflow-hidden">
+        <header class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                    <img src="Assets/Shehari-Yar-Logo.png" alt="Shahriar Logo" class="w-10 h-10 object-contain">
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold header-title">شهریار - آمارنامه ۱۴۰۲</h1>
+                    <p class="text-xs sm:text-sm text-blue-100 header-subtitle">دستیار هوشمند آمارنامه شهرداری مشهد</p>
+                </div>
+            </div>
+            <button id="themeToggle" class="p-2 rounded-full hover:bg-white/20 theme-toggle">
+                <i class="fas fa-sun text-white text-lg icon-spacing"></i>
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 chat-container" id="chatBox">
+            <div class="flex justify-start animate-slide-in">
+                <div class="bot-message p-4 sm:p-5 max-w-[90%] sm:max-w-md">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-robot text-indigo-600 dark:text-blue-400 icon-spacing"></i>
+                        <span class="font-bold text-indigo-600 dark:text-blue-400">شهریار</span>
+                    </div>
+                    <p>سلام بر شما! 🌟 من شهریار، دستیار هوشمند شما برای کاوش در آمارنامه شهرداری مشهد سال ۱۴۰۲ هستم.
+                        آماده‌ام تا به سؤالات شما درباره داده‌ها، آمار و اطلاعات شهر مشهد پاسخ دهم. درباره بودجه،
+                        پروژه‌های شهری، یا هر موضوع دیگری سؤالی دارید؟ از کجا شروع کنیم؟</p>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-3 text-left flex items-center">
+                        <i class="fas fa-clock icon-spacing"></i> اکنون
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end animate-slide-in">
+                <div class="user-message p-4 sm:p-5 max-w-[90%] sm:max-w-md text-white">
+                    <p>سلام! درباره آمارنامه ۱۴۰۲ شهرداری مشهد بگو.</p>
+                    <div class="text-xs text-blue-100 mt-3 text-left flex items-center">
+                        <i class="fas fa-clock icon-spacing"></i> اکنون
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-start animate-slide-in">
+                <div class="bot-message p-4 sm:p-5 max-w-[90%] sm:max-w-md">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-robot text-indigo-600 dark:text-blue-400 icon-spacing"></i>
+                        <span class="font-bold text-indigo-600 dark:text-blue-400">شهریار</span>
+                    </div>
+                    <p>آمارنامه ۱۴۰۲ شهرداری مشهد منبعی جامع از داده‌های شهری است که شامل اطلاعات بودجه، پروژه‌های
+                        عمرانی، خدمات شهری و آمار جمعیتی می‌شود. من می‌توانم به شما کمک کنم تا:</p>
+                    <ul class="list-disc pr-6 space-y-2 mt-3">
+                        <li>اطلاعات بودجه‌ای سال ۱۴۰۲ را بررسی کنید.</li>
+                        <li>آمار پروژه‌های شهری مانند مترو یا پارک‌ها را ببینید.</li>
+                        <li>داده‌های جمعیتی و خدمات عمومی را تحلیل کنید.</li>
+                        <li>به سؤالات خاص شما با جزئیات پاسخ دهم.</li>
+                    </ul>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-3 text-left flex items-center">
+                        <i class="fas fa-clock icon-spacing"></i> اکنون
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-start hidden" id="typingIndicator">
+                <div class="bot-message p-4 sm:p-5 max-w-[90%] sm:max-w-md typing-indicator">
+                    <div class="flex space-x-3 space-x-reverse pr-3">
+                        <span class="w-3 h-3 bg-indigo-400 dark:bg-blue-400 rounded-full"></span>
+                        <span class="w-3 h-3 bg-indigo-400 dark:bg-blue-400 rounded-full"></span>
+                        <span class="w-3 h-3 bg-indigo-400 dark:bg-blue-400 rounded-full"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="p-2 sm:p-4 input-container border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div class="flex items-center space-x-2 sm:space-x-3 space-x-reverse">
+                <input type="text" id="userInput" placeholder="سؤالی درباره آمارنامه ۱۴۰۲ بپرسید..."
+                    class="flex-1 p-3 sm:p-4 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-sm sm:text-base">
+                <div class="pr-6">
+                    <button id="sendButton"
+                        class="bg-indigo-600 dark:bg-blue-600 text-white p-3 sm:p-4 rounded-full send-btn hover:bg-indigo-700 dark:hover:bg-blue-700">
+                        <i class="fas fa-arrow-right h-5 w-5 sm:h-6 sm:w-6 icon-spacing"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chatBox');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const themeToggle = document.getElementById('themeToggle');
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            themeToggle.innerHTML = isDark
+                ? `<i class="fas fa-moon text-white text-lg icon-spacing"></i>`
+                : `<i class="fas fa-sun text-white text-lg icon-spacing"></i>`;
+        });
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes slide-in {
+                from { transform: translateX(100px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            .animate-slide-in {
+                animation: slide-in 0.4s ease-out;
+            }
+        `;
+        document.head.appendChild(style);
+
+        function addMessage(message, isUser) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} animate-slide-in`;
+
+            const bubble = document.createElement('div');
+            bubble.className = isUser
+                ? 'user-message p-4 sm:p-5 max-w-[90%] sm:max-w-md text-white'
+                : 'bot-message p-4 sm:p-5 max-w-[90%] sm:max-w-md';
+
+            bubble.innerHTML = isUser
+                ? `<p class="text-sm sm:text-base">${message}</p>
+                   <div class="text-xs text-blue-100 mt-3 text-left flex items-center">
+                       <i class="fas fa-clock icon-spacing"></i>${timeString}
+                   </div>`
+                : `<div class="flex items-center mb-2">
+                       <i class="fas fa-robot text-indigo-600 dark:text-blue-400 icon-spacing"></i>
+                       <span class="font-bold text-indigo-600 dark:text-blue-400">شهریار</span>
+                   </div>
+                   <p class="text-sm sm:text-base">${message}</p>
+                   <div class="text-xs text-gray-500 dark:text-gray-400 mt-3 text-left flex items-center">
+                       <i class="fas fa-clock icon-spacing"></i>${timeString}
+                   </div>`;
+
+            messageDiv.appendChild(bubble);
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            typingIndicator.classList.remove('hidden');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.classList.add('hidden');
+        }
+
+        function handleSend() {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                userInput.value = '';
+                showTypingIndicator();
+
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    const responses = [
+                        "سؤالتون درباره آمارنامه ۱۴۰۲ دریافت شد! در حال بررسی اطلاعات هستم...",
+                        "من شهریارم، آماده‌ام تا داده‌های دقیق آمارنامه رو براتون پیدا کنم!",
+                        "لطفاً جزئیات بیشتری از سؤالتون بگید تا بهتر راهنمایی کنم.",
+                        "می‌تونید از من درباره بودجه، پروژه‌ها یا آمار جمعیتی بپرسید.",
+                        "در حال جستجو در آمارنامه ۱۴۰۲ شهرداری مشهد... کمی صبر کنید!",
+                        "برای اطلاعات دقیق‌تر، موضوع خاصی مدنظرتونه؟"
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage(randomResponse, false);
+                }, 1500 + Math.random() * 2000);
+            }
+        }
+
+        sendButton.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSend();
+            }
+        });
+    </script>
+</body>
+
+</html>
